@@ -1,5 +1,4 @@
 import { nanoid } from "nanoid"
-import { cookieOption } from "../config/config.js";
 import jwt from 'jsonwebtoken'
 export const genrateNanoId = (length)=>{
     return nanoid(length);

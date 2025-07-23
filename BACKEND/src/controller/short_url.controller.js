@@ -1,5 +1,5 @@
 import { getShortUrl } from "../dao/save_url.js";
-import { createShortUrlWithoutUser, createShortUrlWithUser } from "../services/shortUrl.services.js";
+import { createShortUrlWithoutUser, createShortUrlWithUser } from "../services/shorturl.services.js";
 import { genrateNanoId } from "../utils/helper.js";
 import dotenv from "dotenv";
 dotenv.config({path:"../.env"});

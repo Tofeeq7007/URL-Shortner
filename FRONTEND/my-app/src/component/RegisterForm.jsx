@@ -27,7 +27,7 @@ export function RegisterForm({state}){
         }
     };    
     return(
-        <div className="w-full h-screen bg-gray-100">
+        <div className="w-full h-[685px] bg-gradient-to-r  from-blue-400 to-green-400">
             <div className="flex  justify-center items-center h-full px-4">
                 <div className="bg-white shadow-lg rounded-2xl p-10 w-full max-w-md">
 

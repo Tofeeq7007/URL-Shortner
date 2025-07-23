@@ -1,5 +1,3 @@
-import jwt from 'jsonwebtoken';
-import userSchema from '../Models/user.model.js'
 import { createUser, findUserByEmail } from '../dao/auth.dao.js';
 import dotenv from 'dotenv'
 import { signToken } from '../utils/helper.js';

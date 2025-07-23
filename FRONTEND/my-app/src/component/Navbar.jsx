@@ -16,7 +16,7 @@ export const Navbar= ()=>{
     }
     return (
         <nav className=" items-center bg-gradient-to-r  from-blue-400 to-green-400 bg-gray-300 px-15 py-1 ">
-            <div className="flex justify-between items-center mx-20">
+            <div className="flex justify-between items-center min-md:mx-20 mx-0">
 
             <ul>
                 <li>

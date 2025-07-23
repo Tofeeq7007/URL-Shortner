@@ -5,7 +5,9 @@ import { verifyToken } from "../utils/helper.js"
 
 export const authMiddleware = async(req,res,next)=>{
     console.log("Hi");
-    
+    console.log("All Cookies:", req.cookies); // 👀 this should show the full cookie object
+console.log("Access Token:", req.cookies.accessToken);
+
     const token = req.cookies.accessToken
     // console.log(token);
     const {slug} = req.body;

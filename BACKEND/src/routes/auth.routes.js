@@ -1,8 +1,7 @@
 import express from 'express'
 import { get_current_user, login, logout, register } from '../controller/auth.controller.js';
-import { authMiddleware } from '../middlware/auth.middleware.js';
-import cookieParser from 'cookie-parser';
 import { auth_me } from '../middlware/authme.js';
+import cookieParser from "cookie-parser";
 const authRoutes = express.Router();
 authRoutes.use(cookieParser());
 authRoutes.post('/register' ,register);

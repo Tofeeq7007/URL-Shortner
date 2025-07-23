@@ -1,56 +1,29 @@
 import mongoose from "mongoose";
-import crypto from 'crypto'
 import bcrypt from 'bcrypt'
 const Schema = mongoose.Schema
 
 const UserSchema = new Schema({
     name:{
         type:String,
-        require:true,
+        required:true,
     },
     email:{
         type:String,
-        require:true,    
+        required:true,    
     },
     password:{
         type:String,
-        require:true,   
+        required:true,   
     },
     avatar:{
         type:String,
         required:false,
+        default: "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp",        
     },
 });
 
 
 
-function getGravatarUrl(email){
-    const hash = require('crypto')
-                    .createHash("md5")
-                    .update(email.trim().toLowerCase())
-                    .digest('hex');
-    return `https://www.gravtar.com/avatar/${hash}?d=mp`;
-}
-// Pre-save hook for automatic avatar generation
-UserSchema.pre('save', function(next) {
-    if (!this.isModified('avatar') && !this.avatar) {
-        this.avatar = this.getGravatarUrl();
-    }
-    next();
-});
-// Instance method to generate Gravatar URL
-UserSchema.methods.getGravatarUrl = function(size = 200) {
-    if (!this.email) {
-        return `https://www.gravatar.com/avatar/?d=mp&s=${size}`;
-    }
-    
-    const hash = crypto
-    .createHash("md5")
-    .update(this.email.trim().toLowerCase())
-        .digest('hex');
-    
-    return `https://www.gravatar.com/avatar/${hash}?d=mp&s=${size}`;
-};
 
 // Virtual for public profile (excludes sensitive data)
 UserSchema.virtual('publicProfile').get(function() {

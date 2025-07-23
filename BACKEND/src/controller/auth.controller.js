@@ -41,8 +41,8 @@ export  const get_current_user = wrapAsync(async (req,res)=>{
 export function logout(req, res) {
   res.clearCookie("accessToken", { // must match the name used in res.cookie
     httpOnly: true,                // must match how it was originally set
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure:true,
+    sameSite: "none",
     path: "/"
   });
   return res.status(200).json({ message: "Logged out successfully" });
