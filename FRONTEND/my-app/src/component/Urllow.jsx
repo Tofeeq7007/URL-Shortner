@@ -7,7 +7,7 @@ export function Abcd(){
     const [url , setUrl] = useState("");
     const [slug, setslug] = useState("");
     const [shorturl , setShorttUrl] = useState("");
-
+    const [error ,setError] = useState('')
     const auth = useSelector((state)=>state.auth);
     
 
@@ -17,10 +17,13 @@ export function Abcd(){
         
         try{
             const genratedUrl = await createShortUrl(url,slug);
+
             setShorttUrl(genratedUrl);
+
         }
-        catch(error){
-            console.error("Error :" , error);
+        catch(err){
+            // console.error("Error :" , error);
+            setError(err.response?.data?.message || 'You Insert Wrong URL Please check your URL.')
         }
     }
 
@@ -30,6 +33,11 @@ export function Abcd(){
                 <div className={`bg-white mx-10  max-md:mx-0 shadow-lg rounded-2xl p-10 ${auth.isAuthenticated ? 'w-[70%]' :'min-sm:w-96'}`}>
 
                     <h2 className="bg-white text-2xl font-semibold text text-center mb-6 text-gray-800">URL Shortner</h2>
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
+                            {error}
+                        </div>
+                    )}
                     <div className="mb-4">
                         <input
                             type="url"
