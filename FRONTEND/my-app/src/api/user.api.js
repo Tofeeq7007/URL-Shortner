@@ -29,7 +29,9 @@ export async function logoutUser(email="",password="") {
   return res.data;
 }
 export const getCurrentUser = async ()=>{
-  const {data} = await axiosInstance.get("/api/auth/me");
+  const {data} = await axiosInstance.get("/api/auth/me",{
+    withCredentials:true
+  });
   return data;
 }
 export const getAllUserUrls = async ()=>{
