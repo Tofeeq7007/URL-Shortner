@@ -29,7 +29,7 @@ export async function login(req,res){
     
     
     res.cookie("accessToken", token,cookieOption);
-    res.status(200).json({
+    return res.status(200).json({
         user:user,
         message:"login success"
     });

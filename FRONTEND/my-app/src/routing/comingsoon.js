@@ -3,7 +3,7 @@ import { rootRoute } from "./routeTree";
 import { checkAuth } from "../utils/helper";
 import ComingSoon from "../component/Comingsoon";
 
-export const comingsoon = createRoute({
+export const comingsoonRoute = createRoute({
     getParentRoute:()=>rootRoute,
     path:'/profile',
     component:ComingSoon,
