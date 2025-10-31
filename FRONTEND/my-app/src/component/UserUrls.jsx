@@ -1,128 +1,215 @@
-import React, {useState} from "react";
-import {useQuery} from '@tanstack/react-query'
+import React, { useState } from "react";
+import { useQuery } from '@tanstack/react-query';
 import { getAllUserUrls } from "../api/user.api";
-export const UserUrl = ()=>{
-    const {data:urls , isLoading,isError,error} = useQuery({
-        queryKey:['userUrls'],
-        queryFn: getAllUserUrls,
-        refetchInterval:30000,
-        staleTime:0
-    })
-    const [copiedId,setCopied] = useState(null);
-  const handleCopy = (url, id) => {
-    navigator.clipboard.writeText(url)
-    setCopiedId(id)
-    
-    // Reset the copied state after 2 seconds
-    setTimeout(() => {
-      setCopiedId(null)
-    }, 2000)
-  }
-  if (isLoading) {
-    return (
-      <div className="flex justify-center my-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    )
-  }
+import { Copy, Check, Zap, AlertCircle, Link2, BarChart3 } from "lucide-react";
 
-  if (isError) {
+export const UserUrl = () => {
+    const { data: urls, isLoading, isError, error } = useQuery({
+        queryKey: ['userUrls'],
+        queryFn: getAllUserUrls,
+        refetchInterval: 30000,
+        staleTime: 0
+    });
+
+    const [copiedId, setCopied] = useState(null);
+
+    const handleCopy = (url, id) => {
+        navigator.clipboard.writeText(url);
+        setCopied(id);
+
+        setTimeout(() => {
+            setCopied(null);
+        }, 2000);
+    };
+
+    if (isLoading) {
+        return (
+            <div className="bg-slate-800 rounded-2xl border border-slate-700 p-8 flex flex-col items-center justify-center min-h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-600 border-t-blue-500 mb-4"></div>
+                <p className="text-slate-400">Loading your URLs...</p>
+            </div>
+        );
+    }
+
+    if (isError) {
+        return (
+            <div className="bg-slate-800 rounded-2xl border border-red-500/30 p-6 flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+                <div>
+                    <p className="text-red-300 font-semibold">Error loading URLs</p>
+                    <p className="text-red-200 text-sm">{error?.message}</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!urls?.urls || urls.urls.length === 0) {
+        return (
+            <div className="bg-slate-800 rounded-2xl border border-slate-700 p-12 text-center">
+                <div className="flex justify-center mb-4">
+                    <div className="p-3 bg-slate-700 rounded-lg">
+                        <Link2 className="w-8 h-8 text-slate-500" />
+                    </div>
+                </div>
+                <h3 className="text-white font-semibold text-lg mb-1">No URLs yet</h3>
+                <p className="text-slate-400 text-sm">Start shortening URLs to see them here</p>
+            </div>
+        );
+    }
+
     return (
-      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded my-4">
-        Error loading your URLs: {error.message}
-      </div>
-    )
-  }  
-  if (!urls.urls || urls.urls.length === 0) {
-    return (
-      <div className="text-center text-gray-500 my-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-        <svg className="w-12 h-12 mx-auto text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-        </svg>
-        <p className="text-lg font-medium">No URLs found</p>
-        <p className="mt-1">You haven't created any shortened URLs yet.</p>
-      </div>
-    )
-  }
-  return (
-    <div className="bg-white max-sm:hidden rounded-lg mt-5 shadow-md overflow-hidden">
-      
-      <div className="overflow-x-auto h-56 flex">
-        <table className="w-[100%]  divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Original URL
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Short URL
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Clicks
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {urls.urls.reverse().map((url) => (
-              <tr key={url._id} className="hover:bg-gray-50">
-                <td className="px-6 py-4">
-                  <div className="text-sm text-gray-900 truncate max-w-xs">
-                    {url.full_url}
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-sm">
-                    <a 
-                      href={`${import.meta.env.VITE_BACKEND_URL}/${url.short_url}`} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-900 hover:underline"
-                    >
-                      {`${import.meta.env.VITE_BACKEND_URL}/${url.short_url}`}
-                    </a>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-sm text-gray-900">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                      {url.clicks} {url.clicks === 1 ? 'click' : 'clicks'}
-                    </span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 text-sm font-medium">
-                  <button
-                    onClick={() => handleCopy(`${import.meta.env.VITE_BACKEND_URL}/${url.short_url}`, url._id)}
-                    className={`inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm ${
-                      copiedId === url._id
-                        ? 'bg-green-600 text-white hover:bg-green-700'
-                        : 'bg-blue-600 text-white hover:bg-blue-700'
-                    } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200`}
-                  >
-                    {copiedId === url._id ? (
-                      <>
-                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        Copied!
-                      </>
-                    ) : (
-                      <>
-                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
-                        </svg>
-                        Copy URL
-                      </>
-                    )}
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  )
-}
+        <div className="space-y-6">
+            {/* Header */}
+            <div className="flex items-center gap-2">
+                <Zap className="w-6 h-6 text-blue-400" />
+                <h2 className="text-2xl font-bold text-white">Your Shortened Links</h2>
+                <span className="ml-auto bg-slate-700 px-3 py-1 rounded-lg text-sm text-slate-300">
+                    {urls.urls.length} link{urls.urls.length !== 1 ? 's' : ''}
+                </span>
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden md:block bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-2xl">
+                <div className="overflow-x-auto">
+                    <table className="w-full">
+                        <thead>
+                            <tr className="bg-slate-700/50 border-b border-slate-700">
+                                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-300">Original URL</th>
+                                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-300">Short Link</th>
+                                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-300">Clicks</th>
+                                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-300">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-700">
+                            {urls.urls.slice().reverse().map((url) => (
+                                <tr key={url._id} className="hover:bg-slate-700/30 transition-colors duration-200">
+                                    <td className="px-6 py-4">
+                                        <div className="max-w-xs">
+                                            <a
+                                                href={url.full_url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-blue-400 hover:text-blue-300 text-sm truncate block hover:underline"
+                                                title={url.full_url}
+                                            >
+                                                {url.full_url}
+                                            </a>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <a
+                                            href={`${import.meta.env.VITE_BACKEND_URL}/${url.short_url}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-blue-400 hover:text-blue-300 text-sm hover:underline flex items-center gap-2"
+                                        >
+                                            <Link2 className="w-4 h-4" />
+                                            {url.short_url}
+                                        </a>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center gap-2">
+                                            <BarChart3 className="w-4 h-4 text-slate-500" />
+                                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                                                {url.clicks}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <button
+                                            onClick={() => handleCopy(`${import.meta.env.VITE_BACKEND_URL}/${url.short_url}`, url._id)}
+                                            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${
+                                                copiedId === url._id
+                                                    ? 'bg-green-500/20 text-green-300 border border-green-500/30'
+                                                    : 'bg-blue-500/20 text-blue-300 border border-blue-500/30 hover:bg-blue-500/30'
+                                            }`}
+                                        >
+                                            {copiedId === url._id ? (
+                                                <>
+                                                    <Check className="w-4 h-4" />
+                                                    Copied!
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Copy className="w-4 h-4" />
+                                                    Copy
+                                                </>
+                                            )}
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-4">
+                {urls.urls.slice().reverse().map((url) => (
+                    <div key={url._id} className="bg-slate-800 rounded-xl border border-slate-700 p-5 hover:border-slate-600 transition-colors duration-200">
+                        {/* Short Link */}
+                        <div className="mb-4">
+                            <p className="text-xs font-semibold text-slate-400 mb-1">Short Link</p>
+                            <div className="flex items-center gap-2 bg-slate-700/50 p-3 rounded-lg">
+                                <Link2 className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                                <a
+                                    href={`${import.meta.env.VITE_BACKEND_URL}/${url.short_url}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-400 text-sm truncate hover:underline flex-1"
+                                >
+                                    {url.short_url}
+                                </a>
+                            </div>
+                        </div>
+
+                        {/* Original URL */}
+                        <div className="mb-4">
+                            <p className="text-xs font-semibold text-slate-400 mb-1">Original URL</p>
+                            <a
+                                href={url.full_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-slate-300 text-sm truncate block hover:text-slate-200 hover:underline"
+                                title={url.full_url}
+                            >
+                                {url.full_url}
+                            </a>
+                        </div>
+
+                        {/* Stats and Action */}
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <BarChart3 className="w-4 h-4 text-slate-500" />
+                                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                                    {url.clicks} click{url.clicks !== 1 ? 's' : ''}
+                                </span>
+                            </div>
+                            <button
+                                onClick={() => handleCopy(`${import.meta.env.VITE_BACKEND_URL}/${url.short_url}`, url._id)}
+                                className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg font-medium text-xs transition-all duration-200 ${
+                                    copiedId === url._id
+                                        ? 'bg-green-500/20 text-green-300 border border-green-500/30'
+                                        : 'bg-blue-500/20 text-blue-300 border border-blue-500/30 hover:bg-blue-500/30'
+                                }`}
+                            >
+                                {copiedId === url._id ? (
+                                    <>
+                                        <Check className="w-4 h-4" />
+                                        Copied!
+                                    </>
+                                ) : (
+                                    <>
+                                        <Copy className="w-4 h-4" />
+                                        Copy
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
